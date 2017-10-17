@@ -16,7 +16,13 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.*;
-
+/**
+ * 
+ * @Description: 加载证书工具类
+ * @author yueli
+ * @date 2017年10月17日
+ *
+ */
 public class SslUtil {
 	public static SSLSocketFactory getSocketFactory(final String caCrtFile, final String crtFile, final String keyFile,
 			final String password) throws Exception {

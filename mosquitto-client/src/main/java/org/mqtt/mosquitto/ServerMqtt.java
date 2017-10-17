@@ -17,24 +17,30 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  * 
  * @author yueli 2017年9月1日下午17:41:10
  */
-public class ServerMQTT {
+public class ServerMqtt {
 
-	// ssl://MQTT安装的服务器地址:MQTT定义的端口号
+	/**
+	 *  ssl://MQTT安装的服务器地址:MQTT定义的端口号
+	 */
 	public static final String HOST = "ssl://172.16.192.102:1883";
 	// tcp://MQTT安装的服务器地址:MQTT定义的端口号
 	//public static final String HOST = "tcp://172.16.192.102:1883";
-	// 定义一个主题
-	public static final String TOPIC = "root/topic/123";
-	// 定义MQTT的ID，可以在MQTT服务配置中指定
-	private static final String clientid = "server11";
+	/**
+	 *  定义一个主题
+	 */
+	public static final String TOPIC = "sensor/room1/123";
+	/**
+	 *  定义MQTT的ID，可以在MQTT服务配置中指定
+	 */
+	private static final String CLIENT_ID = "server11";
 
 	private MqttClient client;
 	private MqttTopic topic11;
-	private String userName = "mosquitto";
-	private String passWord = "mosquitto";
-	public static String caFilePath = "D:/keystore/Mosquitto-ca/ssl/ca.crt";
-	public static String clientCrtFilePath = "D:/keystore/Mosquitto-ca/ssl/client.crt";
-	public static String clientKeyFilePath = "D:/keystore/Mosquitto-ca/ssl/client.key";
+	private String userName = "master";
+	private String passWord = "master";
+	public static String caFilePath = "/Users/yueli/document/vianet/IM/Mosquitto/ssl/ca.crt";
+	public static String clientCrtFilePath = "/Users/yueli/document/vianet/IM/Mosquitto/ssl/client.crt";
+	public static String clientKeyFilePath = "/Users/yueli/document/vianet/IM/Mosquitto/ssl/client.key";
 
 	private MqttMessage message;
 
@@ -43,9 +49,9 @@ public class ServerMQTT {
 	 * 
 	 * @throws Exception
 	 */
-	public ServerMQTT() throws Exception {
+	public ServerMqtt() throws Exception {
 		// MemoryPersistence设置clientid的保存形式，默认为以内存保存
-		client = new MqttClient(HOST, clientid, new MemoryPersistence());
+		client = new MqttClient(HOST, CLIENT_ID, new MemoryPersistence());
 		connect();
 	}
 
@@ -59,6 +65,8 @@ public class ServerMQTT {
 		options.setCleanSession(false);
 		options.setUserName(userName);
 		options.setPassword(passWord.toCharArray());
+//		String connPool [] = {"ssl://172.16.192.102:1883","ssl://172.16.192.103:1883"};
+//		options.setServerURIs(connPool);
 		// 设置超时时间
 		options.setConnectionTimeout(10);
 		// 设置会话心跳时间
@@ -95,13 +103,16 @@ public class ServerMQTT {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		ServerMQTT server = new ServerMQTT();
-
-		server.message = new MqttMessage();
-		server.message.setQos(1);
-		server.message.setRetained(true);
-		server.message.setPayload("hello,topic14".getBytes());
-		server.publish(server.topic11, server.message);
-		System.out.println(server.message.isRetained() + "------ratained状态");
+		ServerMqtt server = new ServerMqtt();
+		int length = 5;
+		for (int i = 0; i < length; i++) {
+			server.message = new MqttMessage();
+			server.message.setQos(1);
+			server.message.setRetained(true);
+			server.message.setPayload((" mac - hello number - >" + i ).getBytes());
+			server.publish(server.topic11, server.message);
+			Thread.sleep(10000);
+			System.out.println(server.message.isRetained() + "------ratained状态");
+		}
 	}
 }
